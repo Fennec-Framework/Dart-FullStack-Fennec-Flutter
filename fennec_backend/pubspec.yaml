@@ -1,0 +1,15 @@
+name: fennec_backend
+description: A simple command-line application.
+version: 1.0.0
+# homepage: https://www.example.com
+
+environment:
+  sdk: ">=2.16.2 <3.0.0"
+
+dependencies:
+  fennec: ^0.0.5
+  fennec_pg: ^0.0.1
+  fennec_jwt: ^0.0.2
+
+dev_dependencies:
+  lints: ^1.0.0
