@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:frontend_flutter/pages/chat_list.dart';
+import 'package:frontend_flutter/repositories/api_repository.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -33,9 +35,9 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: const SignUpPage(),
+      home: const ChatList(),
     );
   }
 }
@@ -54,6 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
   bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,34 +161,19 @@ class _SignUpPageState extends State<SignUpPage> {
                         setState(() {
                           loading = true;
                         });
-                        var data = {
-                          'email': email.text,
-                          'user_name': username.text,
-                          'password': password.text
-                        };
-                        try {
-                          Response userData = await dio.post(
-                              'http://192.168.0.116:8080/auth/signup',
-                              data: data);
-                          const snackBar = SnackBar(
-                            content: Text('user sucessful registred'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SignInPage()),
-                          );
-                        } catch (e) {
-                          var snackBar = SnackBar(
-                            content: Text(e.toString()),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        }
-
+                        ApiRepository apiRepository = ApiRepository();
+                        final result = await apiRepository.signup(
+                            username.text, email.text, password.text, context);
                         setState(() {
                           loading = false;
                         });
+                        if (result != null) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
+                        }
                       },
                     ),
                   ),
@@ -220,6 +208,7 @@ class _SignInPageState1 extends State<SignInPage> {
   final TextEditingController username = TextEditingController();
   final TextEditingController password = TextEditingController();
   bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
